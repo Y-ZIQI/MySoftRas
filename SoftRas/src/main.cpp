@@ -4,7 +4,7 @@
 
 #include <Windows.h>
 
-#include "context.h"
+#include "renderer.h"
 
 struct WindowContext
 {
@@ -61,7 +61,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
-        SoftRas::g_ctx.init();
+        SoftRas::g_ctx.init(w_ctx.m_width, w_ctx.m_height);
+
         BITMAPINFOHEADER bmpinfo{};
         bmpinfo.biSize = sizeof(BITMAPINFOHEADER);
         bmpinfo.biWidth = w_ctx.m_width;
@@ -74,7 +75,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         hdc = GetDC(hwnd);
         w_ctx.m_hbitmap = CreateDIBSection(
             nullptr, (BITMAPINFO*)&bmpinfo, DIB_RGB_COLORS,
-            reinterpret_cast<void**>(&SoftRas::g_ctx.getDefaultFramebuffer()),
+            reinterpret_cast<void**>(&SoftRas::g_ctx.getFramebuffer()->m_color_buffers[0].buffer),
             nullptr, 0
         );
         if (!w_ctx.m_hbitmap) {

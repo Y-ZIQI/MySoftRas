@@ -142,14 +142,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\context.cpp" />
+    <ClCompile Include="src\framebuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\math.cpp" />
+    <ClCompile Include="src\maths.cpp" />
+    <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\context.h" />
     <ClInclude Include="include\defines.h" />
-    <ClInclude Include="include\math.h" />
+    <ClInclude Include="include\framebuffer.h" />
+    <ClInclude Include="include\maths.h" />
     <ClInclude Include="include\renderer.h" />
+    <ClInclude Include="include\scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

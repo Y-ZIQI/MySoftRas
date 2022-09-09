@@ -1,5 +1,9 @@
 #pragma once
 
+#define SR_TYPE_NONE 0x0000
+#define SR_TYPE_RGBA8 0x0001
+#define SR_TYPE_RGBA32F 0x0002
+
 namespace SoftRas {
 	typedef unsigned char uint8;
 	typedef unsigned short uint16;

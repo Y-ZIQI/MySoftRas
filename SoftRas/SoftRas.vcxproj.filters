@@ -15,7 +15,16 @@
     <ClCompile Include="src\context.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\math.cpp">
+    <ClCompile Include="src\maths.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framebuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,10 +35,16 @@
     <ClInclude Include="include\defines.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\math.h">
+    <ClInclude Include="include\maths.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\context.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framebuffer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

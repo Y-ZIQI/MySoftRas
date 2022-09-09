@@ -1,4 +1,4 @@
-#include "math.h"
+#include "maths.h"
 
 namespace SoftRas {
 	uint32 color_to_uint32(vec3 color) {
