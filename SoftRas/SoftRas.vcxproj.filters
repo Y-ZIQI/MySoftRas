@@ -27,6 +27,15 @@
     <ClCompile Include="src\renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\old_save.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\renderer.h">
@@ -45,6 +54,12 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\scene.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shader.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\texture.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

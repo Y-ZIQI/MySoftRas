@@ -116,7 +116,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\MyProjects\VSProjects\SoftRas\SoftRas\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\MyProjects\VSProjects\SoftRas\SoftRas\ext;D:\MyProjects\VSProjects\SoftRas\SoftRas\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,7 +133,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\MyProjects\VSProjects\SoftRas\SoftRas\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\MyProjects\VSProjects\SoftRas\SoftRas\ext;D:\MyProjects\VSProjects\SoftRas\SoftRas\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,7 +150,10 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\maths.cpp" />
     <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\old_save.cpp" />
     <ClCompile Include="src\scene.cpp" />
+    <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\context.h" />
@@ -155,6 +162,8 @@
     <ClInclude Include="include\maths.h" />
     <ClInclude Include="include\renderer.h" />
     <ClInclude Include="include\scene.h" />
+    <ClInclude Include="include\shader.h" />
+    <ClInclude Include="include\texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
