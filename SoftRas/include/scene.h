@@ -73,6 +73,29 @@ namespace SoftRas {
 		~Scene() {};
 
 		void init();
+		void clear();
+
+		// demo scene
+		void init_cube_scene();
+		void init_nanosuit_scene();
+
+		// change this to load your scene
+		void load_floor();
+		void load_cube();
+		void load_nanosuit();
+		void load_dirlight();
+		void load_ptlight();
+		void load_camera();
+		// textures
+		const char* src_texs[4] = {
+			"../../resources/cube_scene/tile_diff.png",
+			"../../resources/cube_scene/tile_spec.png",
+			"../../resources/cube_scene/wood_diff.png",
+			"../../resources/cube_scene/wood_spec.png"
+		};
+		const char* nanosuit_dir = "../../resources/nanosuit/";
+		const char* nanosuit_obj = "../../resources/nanosuit/nanosuit.obj";
+		const char* cubemap_path = "../../resources/skybox.png";
 
 		struct Instance
 		{
@@ -89,6 +112,12 @@ namespace SoftRas {
 		DirLight m_dirlight;
 		PointLight m_ptlight;
 		Camera m_camera;
-	};
 
+		int m_skybox_id = -1;
+		Mesh m_sky_cube;
+
+		// scene option
+		bool b_has_dirlight = true;
+		bool b_has_ptlight = true;
+	};
 }

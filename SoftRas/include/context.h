@@ -12,9 +12,8 @@ namespace SoftRas {
 
 		void init(uint window_width, uint window_height);
 
-		void preDraw();
 		void drawTrianglesIndexed(Vertex* vertices, uint* indices, uint amount);
-		void postDraw();
+		void drawScreen();
 
 		void bindFramebuffer(uint id);
 		Framebuffer* getFramebuffer();
@@ -44,9 +43,11 @@ namespace SoftRas {
 		Shader* m_shader = nullptr;
 
 		/* Pipeline status */
-		bool b_depth_test;
-		bool b_cull_back;
-		bool b_cull_front;
+		bool b_depth_test = true;
+		bool b_cull_back = true;
+		bool b_cull_front = false;
+		// so far MSAA is not supported, this should be false
+		bool b_msaa = false;
 		uvec4 m_viewport; // x0, y0, width, height, (0, 0) means left-top
 
 		/* Global resources */
@@ -58,6 +59,7 @@ namespace SoftRas {
 		uint m_vs_out_size;
 		float* m_vs_out_block = nullptr;
 		float* m_fs_in_block = nullptr;
+		vec4* m_fs_out_block = nullptr;
 		bool rasterTriangle(float* v0_buf, float* v1_buf, float* v2_buf);
 	};
 

@@ -16,6 +16,9 @@ namespace SoftRas {
 		if (hasDepthBuffer()) {
 			delete m_depth_buffer;
 		}
+		if (hasMSAADepthBuffer()) {
+			delete m_msaa_depth_buffer;
+		}
 	}
 	void Framebuffer::init(uint id, uint width, uint height)
 	{
@@ -88,6 +91,12 @@ namespace SoftRas {
 			m_color_buffers[id].buffer[y * m_width + x] = value;
 		}
 	}
+	void Framebuffer::blendPixel(uint id, uint x, uint y, uint32 value)
+	{
+		if (id < m_color_buffers.size() && y < m_height && x < m_width) {
+			m_color_buffers[id].buffer[y * m_width + x] += value;
+		}
+	}
 	float Framebuffer::readDepth(uint x, uint y)
 	{
 		if (hasDepthBuffer() && y < m_height && x < m_width) {
@@ -115,6 +124,55 @@ namespace SoftRas {
 			for (uint i = 0; i < m_height * m_width; i++) {
 				m_depth_buffer[i] = value;
 			}
+		}
+		if (hasMSAADepthBuffer()) {
+			for (uint i = 0; i < m_height * m_width; i++) {
+				m_msaa_depth_buffer[4 * i] = value; 
+				m_msaa_depth_buffer[4 * i + 1] = value; 
+				m_msaa_depth_buffer[4 * i + 2] = value; 
+				m_msaa_depth_buffer[4 * i + 3] = value; 
+				m_msaa_flag_buffer[i] = 0;
+			}
+		}
+	}
+	void Framebuffer::addMSAADepthBuffer(float* ext_buffer)
+	{
+		if (!m_msaa_depth_buffer) {
+			if (ext_buffer) {
+				m_msaa_depth_buffer = ext_buffer;
+			}
+			else {
+				m_msaa_depth_buffer = new float[m_width * m_height * 4];
+			}
+			m_msaa_flag_buffer = new uint8[m_width * m_height];
+		}
+	}
+	float* Framebuffer::getMSAADepthBuffer()
+	{
+		return m_msaa_depth_buffer;
+	}
+	bool Framebuffer::hasMSAADepthBuffer()
+	{
+		return m_msaa_depth_buffer != nullptr;
+	}
+	float Framebuffer::readMSAADepth(uint x, uint y, uint8 index)
+	{
+		if (hasMSAADepthBuffer() && y < m_height && x < m_width) {
+			return m_msaa_depth_buffer[(y * m_width + x) * 4 + index];
+		}
+		return 1.0;
+	}
+	void Framebuffer::setMSAADepth(uint x, uint y, uint8 index, float value)
+	{
+		if (hasMSAADepthBuffer() && y < m_height && x < m_width) {
+			m_msaa_depth_buffer[(y * m_width + x) * 4 + index] = value;
+		}
+	}
+	void Framebuffer::setMSAAFlag(uint x, uint y, uint8 index)
+	{
+		if (hasMSAADepthBuffer() && y < m_height && x < m_width) {
+			uint8& bits = m_msaa_flag_buffer[y * m_width + x];
+			bits = bits | (0x1 << index);
 		}
 	}
 	void Framebuffer::applyExternalBuffer(uint id, uint32* ext_buffer)

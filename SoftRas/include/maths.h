@@ -161,8 +161,11 @@ namespace SoftRas {
 	vec3 normalize(vec3 v);
 	vec2 normalize(vec2 v);
 
+	uint32 color_to_uint32(vec4 color);
 	uint32 color_to_uint32(vec3 color);
+	uint32 color_to_uint32(uint8 r, uint8 g, uint8 b, uint8 a);
 	uint32 color_to_uint32(uint8 r, uint8 g, uint8 b);
+	vec3 uint32_to_color(uint32 n);
 
 	bool insideTriangle(vec2 p, vec2 v0, vec2 v1, vec2 v2);
 	bool insideTriangleVectors(vec2 p, vec2 v0, vec2 v1, vec2 v2, vec2 v01, vec2 v12, vec2 v20);
@@ -195,4 +198,6 @@ namespace SoftRas {
 	float random(float seed);
 	// 0,1,2,3,4,5 => forward,backward,left,right,up,down
 	vec3 mmove(vec3 pos, uint8 dir, float dist, vec3 front = { 0.0f, 0.0f, -1.0f }, vec3 right = { 1.0f, 0.0f, 0.0f }, vec3 up = { 0.0f, 1.0f, 0.0f });
+
+	extern vec2 Halton4[4];
 }

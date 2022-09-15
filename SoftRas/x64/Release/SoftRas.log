@@ -1,0 +1,51 @@
+﻿  context.cpp
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\context.cpp(289,24): warning C4018: “<”: 有符号/无符号不匹配
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\context.cpp(291,25): warning C4018: “<”: 有符号/无符号不匹配
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\context.cpp(327,28): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\context.cpp(365,29): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\context.cpp(380,25): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\context.cpp(390,25): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+  framebuffer.cpp
+  main.cpp
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\main.cpp(145,21): warning C4244: “参数”: 从“WPARAM”转换到“SoftRas::uint8”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\main.cpp(148,19): warning C4244: “参数”: 从“WPARAM”转换到“SoftRas::uint8”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\main.cpp(201,32): warning C4101: “count”: 未引用的局部变量
+  maths.cpp
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\maths.cpp(692,57): warning C4305: “参数”: 从“double”到“float”截断
+  renderer.cpp
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\renderer.cpp(63,97): warning C4267: “参数”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\renderer.cpp(110,97): warning C4267: “参数”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\renderer.cpp(148,82): warning C4244: “-=”: 从“double”转换到“float”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\renderer.cpp(151,82): warning C4244: “+=”: 从“double”转换到“float”，可能丢失数据
+  old_save.cpp
+  scene.cpp
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(146,31): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(146,55): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(146,79): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(153,3): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(158,35): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(158,56): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(165,31): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(165,55): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(165,79): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(197,3): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(215,35): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(222,53): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(232,31): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(232,55): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(232,79): warning C4267: “初始化”: 从“size_t”转换到“SoftRas::uint”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(295,53): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(300,89): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\scene.cpp(304,110): warning C4305: “初始化”: 从“double”到“float”截断
+  shader.cpp
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\shader.cpp(157,33): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\shader.cpp(280,80): warning C4305: “初始化”: 从“double”到“float”截断
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\shader.cpp(327,47): warning C4838: 从“double”转换到“float”需要收缩转换
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\shader.cpp(327,47): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+  texture.cpp
+  正在生成代码
+  Previous IPDB not found, fall back to full compilation.
+D:\MyProjects\VSProjects\SoftRas\SoftRas\src\maths.cpp(722): warning C4715: “SoftRas::mmove”: 不是所有的控件路径都返回值
+  All 2363 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  SoftRas.vcxproj -> D:\MyProjects\VSProjects\SoftRas\x64\Release\SoftRas.exe

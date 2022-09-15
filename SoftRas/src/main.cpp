@@ -102,7 +102,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
         SoftRas::g_ctx.init(w_ctx.m_width, w_ctx.m_height);
-        rdr.init();
+        rdr.init(w_ctx.m_width, w_ctx.m_height);
 
         BITMAPINFOHEADER bmpinfo{};
         bmpinfo.biSize = sizeof(BITMAPINFOHEADER);

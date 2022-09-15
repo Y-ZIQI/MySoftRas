@@ -479,11 +479,27 @@ namespace SoftRas {
 		return { v.x / len, v.y / len };
 	}
 
+	uint32 color_to_uint32(vec4 color)
+	{
+		return color_to_uint32((uint8)(255.0 * color.x), (uint8)(255.0 * color.y), (uint8)(255.0 * color.z), (uint8)(255.0 * color.w));
+	}
 	uint32 color_to_uint32(vec3 color) {
 		return color_to_uint32((uint8)(255.0 * color.x), (uint8)(255.0 * color.y), (uint8)(255.0 * color.z));
 	}
+	uint32 color_to_uint32(uint8 r, uint8 g, uint8 b, uint8 a)
+	{
+		return ((uint32)a << 24) || ((uint32)r << 16) | ((uint32)g << 8) | b;
+	}
 	uint32 color_to_uint32(uint8 r, uint8 g, uint8 b){
 		return ((uint32)r << 16) | ((uint32)g << 8) | b;
+	}
+	vec3 uint32_to_color(uint32 n)
+	{
+		return vec3{
+			(float)(n & 0x000000FF) / 255.0f,
+			(float)((n & 0x0000FF00) >> 8) / 255.0f,
+			(float)((n & 0x00FF0000) >> 16) / 255.0f
+		};
 	}
 
 	bool insideTriangle(vec2 p, vec2 v0, vec2 v1, vec2 v2)
@@ -704,4 +720,11 @@ namespace SoftRas {
 		case 5: return pos - up * dist3;
 		}
 	}
+
+	vec2 Halton4[4]{
+		{0.125f, 0.375f},
+		{0.375f, 0.875f},
+		{0.625f, 0.125f},
+		{0.875f, 0.625f}
+	};
 }

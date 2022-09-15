@@ -34,6 +34,9 @@ namespace SoftRas {
 		if (m_fs_in_block) {
 			delete m_fs_in_block;
 		}
+		if (m_fs_out_block) {
+			delete m_fs_out_block;
+		}
 	}
 
 	void Context::init(uint window_width, uint window_height)
@@ -49,15 +52,18 @@ namespace SoftRas {
 		}
 		if (!m_fs_in_block) {
 #ifdef SR_PARALLEL_RASTERIZE
-			m_fs_in_block = new float[SR_MAX_PARALLEL_SIZE * SR_MAX_VERTEX_OUT_SIZE]; // max 1024 line parallelly rasterize
+			m_fs_in_block = new float[SR_MAX_PARALLEL_SIZE * SR_MAX_VERTEX_OUT_SIZE];
 #else
 			m_fs_in_block = new float[SR_MAX_VERTEX_OUT_SIZE];
 #endif
 		}
-	}
-
-	void Context::preDraw()
-	{
+		if (!m_fs_out_block) {
+#ifdef SR_PARALLEL_RASTERIZE
+			m_fs_out_block = new vec4[SR_MAX_PARALLEL_SIZE * SR_MAX_FRAGMENT_OUT_SIZE];
+#else
+			m_fs_out_block = new vec4[SR_MAX_FRAGMENT_OUT_SIZE];
+#endif
+		}
 	}
 
 	void Context::drawTrianglesIndexed(Vertex* vertices, uint* indices, uint amount)
@@ -164,56 +170,136 @@ namespace SoftRas {
 		for (int iy = miny; iy < maxy; iy++) {
 			float y = (float)iy;
 			float* f_buf = m_fs_in_block + (uint)(y + m_eps) * m_vs_out_size;
+			vec4* f_out_buf = m_fs_out_block + (uint)(y + m_eps) * m_framebuffer->getColorBufferCount();
 #else
 		float* f_buf = m_fs_in_block;
+		vec4* f_out_buf = m_fs_out_block;
 		for (float y = view_bb.bb_min.y; y < view_bb.bb_max.y; y += 1.0f) {
 #endif
 			bool has_inter = false;
 			for (float x = view_bb.bb_min.x; x < view_bb.bb_max.x; x += 1.0f) {
-				// frag.xy
-				f_buf[0] = x + 0.5f;
-				f_buf[1] = y + 0.5f;
-				vec2&& p{ f_buf[0], f_buf[1] };
-				// first interpolate frag.zw then depth test
-				const vec3 b_cd = vec3{ p.x,p.x,p.x } *b_cd0 + vec3{ p.y,p.y,p.y } *b_cd1 + b_c0;
-				if (b_cd.x < 0.0f || b_cd.y < 0.0f || b_cd.z < 0.0f) {
-					if (has_inter)
-						break;
-					continue;
-				}
-				else if (!has_inter) {
-					has_inter = true;
-				}
-				f_buf[2] = interpolate(b_cd, v0.z, v1.z, v2.z);
-				f_buf[3] = interpolate(b_cd, v0.w, v1.w, v2.w);
-				if (f_buf[2] < 0.0f || f_buf[2] > 1.0f) {
-					continue;
-				}
-				else if (b_depth_test) {
-					// depth testing, f_buf[0,1,2] = (x,y,depth)
-					if (f_buf[2] < m_framebuffer->readDepth((uint)p.x, (uint)p.y)) {
-						m_framebuffer->setDepth((uint)p.x, (uint)p.y, f_buf[2]);
+				if (b_msaa && b_depth_test && m_framebuffer->hasMSAADepthBuffer()) { // so far MSAA must combine with depth test
+					float wt = 0.0f, src_wt = 1.0f;
+					for (int n = 0; n < 4; n++) {
+						f_buf[0] = x + Halton4[n].x;
+						f_buf[1] = y + Halton4[n].y;
+						vec2&& p{ f_buf[0], f_buf[1] };
+						const vec3 b_cd = vec3{ p.x,p.x,p.x } *b_cd0 + vec3{ p.y,p.y,p.y } *b_cd1 + b_c0;
+						if (b_cd.x >= 0.0f && b_cd.y >= 0.0f && b_cd.z >= 0.0f) {
+							f_buf[2] = interpolate(b_cd, v0.z, v1.z, v2.z);
+							f_buf[3] = interpolate(b_cd, v0.w, v1.w, v2.w);
+							if (f_buf[2] >= 0.0f || f_buf[2] <= 1.0f) {
+								if (f_buf[2] < m_framebuffer->readMSAADepth((uint)p.x, (uint)p.y, n)) {
+									m_framebuffer->setMSAADepth((uint)p.x, (uint)p.y, n, f_buf[2]);
+									wt += 0.25f;
+									src_wt -= 0.25f;
+								}
+							}
+						}
 					}
-					else {
+					if (wt <= m_eps) {
+						if (has_inter)
+							break;
 						continue;
 					}
+					else {
+						has_inter = true;
+					}
+					f_buf[0] = x + 0.5f;
+					f_buf[1] = y + 0.5f;
+					vec2&& p{ f_buf[0], f_buf[1] };
+					// first interpolate frag.zw then depth test
+					const vec3 b_cd = vec3{ p.x,p.x,p.x } *b_cd0 + vec3{ p.y,p.y,p.y } *b_cd1 + b_c0;
+					f_buf[2] = interpolate(b_cd, v0.z, v1.z, v2.z);
+					f_buf[3] = interpolate(b_cd, v0.w, v1.w, v2.w);
+					// interpolate remain props with fixed-barycentric2D
+					const float persp = 1.0f / f_buf[3];
+					vec3 persp3{ persp, persp, persp };
+					persp3 = persp3 * b_cd * vec3{ v0.w, v1.w, v2.w };
+					for (uint i = 4; i < m_vs_out_size; i++) {
+						f_buf[i] = interpolate(persp3, v0_buf[i], v1_buf[i], v2_buf[i]);
+					}
+					/* Fragment Shader */
+					m_shader->fragmentShader({ f_buf, (uint)p.x, (uint)p.y }, { f_out_buf });
+					for (uint n = 0; n < m_framebuffer->getColorBufferCount(); n++) {
+						vec3 write_color{ f_out_buf[n].x * f_out_buf[n].w, f_out_buf[n].y * f_out_buf[n].w, f_out_buf[n].z * f_out_buf[n].w };
+						vec3 old_color = uint32_to_color(m_framebuffer->readPixel(n, (uint)p.x, (uint)p.y));
+						write_color = write_color * toVec3(wt) + old_color * toVec3(src_wt);
+						m_framebuffer->setPixel(n, (uint)p.x, (uint)p.y, color_to_uint32(write_color));
+					}
 				}
-				// interpolate remain props with fixed-barycentric2D
-				const float persp = 1.0f / f_buf[3];
-				vec3 persp3{ persp, persp, persp };
-				persp3 = persp3 * b_cd * vec3{ v0.w, v1.w, v2.w };
-				for (uint i = 4; i < m_vs_out_size; i++) {
-					f_buf[i] = interpolate(persp3, v0_buf[i], v1_buf[i], v2_buf[i]);
+				else { // No MSAA
+					f_buf[0] = x + 0.5f;
+					f_buf[1] = y + 0.5f;
+					vec2&& p{ f_buf[0], f_buf[1] };
+					// first interpolate frag.zw then depth test
+					const vec3 b_cd = vec3{ p.x,p.x,p.x } *b_cd0 + vec3{ p.y,p.y,p.y } *b_cd1 + b_c0;
+					if (b_cd.x < 0.0f || b_cd.y < 0.0f || b_cd.z < 0.0f) {
+						if (has_inter)
+							break;
+						continue;
+					}
+					else {
+						has_inter = true;
+					}
+					f_buf[2] = interpolate(b_cd, v0.z, v1.z, v2.z);
+					f_buf[3] = interpolate(b_cd, v0.w, v1.w, v2.w);
+					if (f_buf[2] < 0.0f || f_buf[2] > 1.0f) {
+						continue;
+					}
+					else if (b_depth_test && m_framebuffer->hasDepthBuffer()) {
+						// depth testing, f_buf[0,1,2] = (x,y,depth)
+						if (f_buf[2] < m_framebuffer->readDepth((uint)p.x, (uint)p.y)) {
+							m_framebuffer->setDepth((uint)p.x, (uint)p.y, f_buf[2]);
+						}
+						else {
+							continue;
+						}
+					}
+					// interpolate remain props with fixed-barycentric2D
+					const float persp = 1.0f / f_buf[3];
+					vec3 persp3{ persp, persp, persp };
+					persp3 = persp3 * b_cd * vec3{ v0.w, v1.w, v2.w };
+					for (uint i = 4; i < m_vs_out_size; i++) {
+						f_buf[i] = interpolate(persp3, v0_buf[i], v1_buf[i], v2_buf[i]);
+					}
+					/* Fragment Shader */
+					m_shader->fragmentShader({ f_buf, (uint)p.x, (uint)p.y }, { f_out_buf });
+					for (uint n = 0; n < m_framebuffer->getColorBufferCount(); n++) {
+						vec3 write_color{ f_out_buf[n].x * f_out_buf[n].w, f_out_buf[n].y * f_out_buf[n].w, f_out_buf[n].z * f_out_buf[n].w };
+						m_framebuffer->setPixel(n, (uint)p.x, (uint)p.y, color_to_uint32(write_color));
+					}
 				}
-				/* Fragment Shader */
-				m_shader->fragmentShader({ f_buf, (uint)p.x, (uint)p.y }, m_framebuffer);
 			}
 		}
 		return true;
 	}
 
-	void Context::postDraw()
+	void Context::drawScreen()
 	{
+		uvec4 vp = getViewport();
+#ifdef SR_PARALLEL_RASTERIZE
+		#pragma omp parallel for
+		for (int y = vp.y; y < vp.y + vp.w; y++) {
+			float* f_buf = m_fs_in_block + (uint)(y + m_eps) * m_vs_out_size;
+			vec4* f_out_buf = m_fs_out_block + (uint)(y + m_eps) * m_framebuffer->getColorBufferCount();
+#else
+		float* f_buf = m_fs_in_block;
+		vec4* f_out_buf = m_fs_out_block;
+		for (int y = vp.y; y < vp.y + vp.w; y++) {
+#endif
+			for (int x = vp.x; x < vp.x + vp.z; x++) {
+				vec2&& p{ (float)x + 0.5f, (float)y + 0.5f };
+				// frag.xy
+				f_buf[0] = (p.x - (float)vp.x) / (float)vp.z;
+				f_buf[1] = 1.0f - (p.y - (float)vp.y) / (float)vp.w;
+				m_shader->fragmentShader({ f_buf, (uint)p.x, (uint)p.y }, { f_out_buf });
+				for (uint n = 0; n < m_framebuffer->getColorBufferCount(); n++) {
+					vec3 write_color{ f_out_buf[n].x * f_out_buf[n].w, f_out_buf[n].y * f_out_buf[n].w, f_out_buf[n].z * f_out_buf[n].w };
+					m_framebuffer->setPixel(n, (uint)p.x, (uint)p.y, color_to_uint32(write_color));
+				}
+			}
+		}
 	}
 
 	void Context::bindFramebuffer(uint id)
@@ -319,6 +405,8 @@ namespace SoftRas {
 			return b_cull_back;
 		case SR_FLAG_CULL_FRONT:
 			return b_cull_front;
+		case SR_FLAG_MSAA:
+			return b_msaa;
 		}
 	}
 
@@ -331,6 +419,8 @@ namespace SoftRas {
 			b_cull_back = true; break;
 		case SR_FLAG_CULL_FRONT:
 			b_cull_front = true; break;
+		case SR_FLAG_MSAA:
+			b_msaa = true; break;
 		}
 	}
 
@@ -343,6 +433,8 @@ namespace SoftRas {
 			b_cull_back = false; break;
 		case SR_FLAG_CULL_FRONT:
 			b_cull_front = false; break;
+		case SR_FLAG_MSAA:
+			b_msaa = false; break;
 		}
 	}
 
